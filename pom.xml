@@ -16,8 +16,8 @@
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:git:ssh://git@github.com/jenkinsci/plugin-compat-tester.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/jenkinsci/plugin-compat-tester.git</developerConnection>
+    <connection>scm:git:https://github.com/cloudbees-oss/plugin-compat-tester.git</connection>
+    <developerConnection>scm:git:https://github.com/cloudbees-oss/plugin-compat-tester.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
 
@@ -123,32 +123,85 @@
 
   <repositories>
     <repository>
-        <id>repo.jenkins-ci.org</id>
-        <url>https://repo.jenkins-ci.org/public/</url>
+        <id>cloudbees-internal-snapshots</id>
+        <name>CloudBees Internal Snapshots</name>
+        <url>https://nexus-internal.cloudbees.com</url>
+        <releases>
+            <enabled>false</enabled>
+        </releases>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
     </repository>
   </repositories>
 
-  <pluginRepositories>
-    <pluginRepository>
-        <id>repo.jenkins-ci.org</id>
-        <url>https://repo.jenkins-ci.org/public/</url>
-    </pluginRepository>
-  </pluginRepositories>
+  <pluginRepositories />
 
   <distributionManagement>
-    <repository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>maven.jenkins-ci.org</id>
-      <url>https://repo.jenkins-ci.org/releases/</url>
-    </repository>
     <snapshotRepository>
-      <id>maven.jenkins-ci.org</id>
-      <url>https://repo.jenkins-ci.org/snapshots/</url>
+      <id>cloudbees-internal-snapshots</id>
+      <name>CloudBees Internal Snapshots</name>
+      <url>${cloudbeesInternalDistMgmtSnapshotsUrl}</url>
     </snapshotRepository>
+    <repository>
+      <id>cloudbees-internal-staging</id>
+      <name>CloudBees Internal Release Repository</name>
+      <url>${cloudbeesInternalDistMgmtReleasesUrl}</url>
+    </repository>    
+
+
   </distributionManagement>
 
   <build>
+    <pluginManagement>
+      <plugins>
+          <plugin>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+                <execution>
+                  <id>attach-javadocs</id>
+                  <goals>
+                    <goal>jar</goal>
+                  </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <failOnError>false</failOnError>
+            </configuration>
+          </plugin>
+          <plugin>
+              <artifactId>maven-release-plugin</artifactId>
+              <configuration>
+                <mavenExecutorId>forked-path</mavenExecutorId>
+                <useReleaseProfile>false</useReleaseProfile>
+                <!-- work around for a bug in javadoc plugin that causes the release to fail. see MRELEASE-271 -->
+                <preparationGoals>clean install</preparationGoals>
+                <goals>javadoc:javadoc javadoc:jar javadoc:aggregate deploy</goals>
+              </configuration>
+          </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.0.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.7</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>cloudbees-internal-staging</serverId>
+          <nexusUrl>https://nexus-internal.cloudbees.com/</nexusUrl>
+          <stagingProfileId>ac6439af20821</stagingProfileId>
+          <tags>
+            <localUsername>${env.USER}</localUsername>
+            <javaVersion>${java.version}</javaVersion>
+          </tags>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
@@ -173,12 +226,25 @@
       <plugin>
         <artifactId>maven-release-plugin</artifactId>
         <version>2.5.3</version>
+      </plugin>
+      <!-- TODO: remove when library parent POM enables FindBugs by default -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
         <configuration>
-          <mavenExecutorId>forked-path</mavenExecutorId>
-          <useReleaseProfile>false</useReleaseProfile>
-          <preparationGoals>clean install</preparationGoals>
-          <goals>deploy</goals>
+          <xmlOutput>true</xmlOutput>
+          <effort>Max</effort>
+          <!-- TODO: issues need to be fixed first-->
+          <failOnError>false</failOnError>
         </configuration>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
