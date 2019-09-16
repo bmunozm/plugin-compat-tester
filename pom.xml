@@ -123,19 +123,17 @@
 
   <repositories>
     <repository>
-        <id>cloudbees-internal-snapshots</id>
-        <name>CloudBees Internal Snapshots</name>
-        <url>https://nexus-internal.cloudbees.com</url>
-        <releases>
-            <enabled>false</enabled>
-        </releases>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
+        <id>repo.jenkins-ci.org</id>
+        <url>https://repo.jenkins-ci.org/public/</url>
     </repository>
   </repositories>
 
-  <pluginRepositories />
+  <pluginRepositories>
+    <pluginRepository>
+        <id>repo.jenkins-ci.org</id>
+        <url>https://repo.jenkins-ci.org/public/</url>
+    </pluginRepository>
+  </pluginRepositories>
 
   <distributionManagement>
     <snapshotRepository>
@@ -147,7 +145,7 @@
       <id>cloudbees-internal-staging</id>
       <name>CloudBees Internal Release Repository</name>
       <url>${cloudbeesInternalDistMgmtReleasesUrl}</url>
-    </repository>    
+    </repository>
 
 
   </distributionManagement>
