@@ -49,7 +49,7 @@ public class OpenshiftHook extends PluginCompatTesterHookBeforeCheckout {
             System.out.println("Checking out from SCM tag " + scmTag);
                 
             ScmManager scmManager = SCMManagerFactory.getInstance().createScmManager();
-            ScmRepository repository = scmManager.makeScmRepository("scm:git:https://github.com/cloudbees/openshift-cli-plugin.git");
+            ScmRepository repository = scmManager.makeScmRepository("scm:git:ssh://git@github.com/cloudbees/openshift-cli-plugin.git");
             CheckOutScmResult result = scmManager.checkOut(repository, new ScmFileSet(checkoutPath), new ScmTag(scmTag));
 
             if (!result.isSuccess()) {

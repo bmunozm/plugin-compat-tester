@@ -22,7 +22,7 @@ public class CloudbeesHaHook extends AbstractMultiParentHook {
 
     @Override
     protected String getParentUrl() {
-        return "scm:git:https://github.com/cloudbees/jenkins-ha.git";
+        return "scm:git:ssh://git@github.com/cloudbees/jenkins-ha.git";
     }
 
     @Override

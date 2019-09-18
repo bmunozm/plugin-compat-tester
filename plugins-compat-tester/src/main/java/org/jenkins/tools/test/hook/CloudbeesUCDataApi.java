@@ -22,7 +22,7 @@ public class CloudbeesUCDataApi extends AbstractMultiParentHook {
 
     @Override
     protected String getParentUrl() {
-        return "scm:git:https://github.com/cloudbees/cloudbees-uc-data-plugin.git";
+        return "scm:git:ssh://git@github.com/cloudbees/cloudbees-uc-data-plugin.git";
     }
 
     @Override

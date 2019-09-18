@@ -21,7 +21,7 @@ public class OCAnalytics extends AbstractMultiParentHook {
 
     @Override
     protected String getParentUrl() {
-        return "scm:git:https://github.com/cloudbees/operations-center-analytics.git";
+        return "scm:git:ssh://git@github.com/cloudbees/operations-center-analytics.git";
     }
 
     @Override
@@ -40,6 +40,6 @@ public class OCAnalytics extends AbstractMultiParentHook {
     }
 
     public static boolean isOCAnalytics(PomData data) {
-        return data.artifactId.contains("operations-center-analytics") && data.parent != null && data.parent.artifactId.equalsIgnoreCase("operations-center-parent") ;
+        return data.artifactId.contains("operations-center-analytics") && data.parent != null && data.parent.artifactId.contains("operations-center-parent") ;
     }
 }
